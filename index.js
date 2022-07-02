@@ -20,6 +20,7 @@ async function run() {
   try {
     await client.connect();
     const toDoCollection = client.db("messManager").collection("toDo");
+    const completeCollection = client.db("messManager").collection("complete");
 
     app.get("/toDo", async (req, res) => {
       const query = {};
@@ -27,9 +28,25 @@ async function run() {
       const services = await cursor.toArray();
       res.send(services);
     });
-    app.post("/addToDo", async (req, res) => {
-      const data = req.body;
-      const result = await toDoCollection.insertOne(data);
+    app.get("/complete", async (req, res) => {
+      const query = {};
+      const cursor = completeCollection.find(query);
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+    app.post("/toDo", async (req, res) => {
+      const todoBafa = req.body;
+      const result = await toDoCollection.insertOne(todoBafa);
+      res.send(result);
+    });
+    app.post("/complete", async (req, res) => {
+      const complete = req.body;
+      const result = await completeCollection.insertOne(complete);
+      res.send(result);
+    });
+    app.delete("/toDo", async (req, res) => {
+      const dataCom = req.body;
+      const result = await toDoCollection.deleteOne(dataCom);
       res.send(result);
     });
   } finally {
